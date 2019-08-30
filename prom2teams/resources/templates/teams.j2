@@ -15,7 +15,7 @@
     "summary": "{% if status=='resolved' %}(Resolved) {% endif %}{{ msg_text.summary }}",
     "title": "Prometheus alarm {% if status=='resolved' %}(Resolved) {% elif status=='unknown' %} (status unknown) {% endif %}",
     "sections": [{
-        "activityTitle": "{{ msg_text.summary }}",
+        "activityTitle": "{{ msg_text.message }}",
         "facts": [{% if msg_text.name %}{
             "name": "Alarm",
             "value": "{{ msg_text.name }}"
@@ -27,7 +27,7 @@
             "value": "{{ msg_text.severity }}"
         },{% endif %}{% if msg_text.description %}{
             "name": "Description",
-            "value": "{{ msg_text.description }}"
+            "value": "{{ msg_text.message }}"
         },{% endif %}{
             "name": "Status",
             "value": "{{ msg_text.status }}"
