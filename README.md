@@ -47,8 +47,8 @@ $ pip3 install prom2teams
 **Important:** Config path must be provided with at least one Microsoft Teams Connector. Check the options to know how you can supply it.
 
 ```bash
-# To start the server (config file path , group alerts by, log file path, log level and Jinja2 template path are optional arguments):
-$ prom2teams [--configpath <config file path>] [--groupalertsby ("name"|"description"|"instance"|"severity"|"summary")] [--logfilepath <log file path>] [--loglevel (DEBUG|INFO|WARNING|ERROR|CRITICAL)] [--templatepath <Jinja2 template file path>]
+# To start the server (enable metrics, config file path , group alerts by, log file path, log level and Jinja2 template path are optional arguments):
+$ prom2teams [--enablemetrics] [--configpath <config file path>] [--groupalertsby ("name"|"description"|"instance"|"severity"|"summary")] [--logfilepath <log file path>] [--loglevel (DEBUG|INFO|WARNING|ERROR|CRITICAL)] [--templatepath <Jinja2 template file path>]
 
 # To show the help message:
 $ prom2teams --help
@@ -60,6 +60,61 @@ export APP_CONFIG_FILE=<config file path>
 $ prom2teams
 ```
 **Note:** Grouping alerts works since v2.2.1
+
+### Prom2teams Prometheus metrics
+
+Prom2teams uses Flask and, to have the service monitored, we use @rycus66's [Prometheus Flask Exporter](https://github.com/rycus86/prometheus_flask_exporter). This will enable an endpoint in `/metrics` where you could find interesting metrics to monitor such as number of responses with a certain status. To enable this endpoint, just either:
+
+- Use the `--enablemetrics` or `-m` flag when launching prom2teams.
+- Set the environment variable `PROM2TEAMS_PROMETHEUS_METRICS=true`.
+
+### Helm chart
+
+#### Installing the Chart
+
+To install the chart with the release name `my-release` run:
+
+```bash
+$ helm install --name my-release /location/of/prom2teams_ROOT/helm
+```
+
+After a few seconds, Prom2Teams should be running.
+
+> **Tip**: List all releases using `helm list`, a release is a name used to track a specific deployment
+
+#### Uninstalling the Chart
+
+To uninstall/delete the `my-release` deployment:
+
+```bash
+$ helm delete my-release
+```
+> **Tip**: Use helm delete --purge my-release to completely remove the release from Helm internal storage
+
+The command removes all the Kubernetes components associated with the chart and deletes the release.
+
+#### Configuration
+
+The following table lists the configurable parameters of the Prom2teams chart and their default values.
+
+| Parameter                                       | Description                                                                                                        | Default
+| ---                                             | ---                                                                                                                | ---
+| `image.repository`                              | The image repository to pull from                                                                                  | `idealista/prom2teams`
+| `image.tag`                                     | The image tag to pull                                                                                              | `2.4.0`
+| `image.pullPolicy`                              | The image pull policy                                                                                              | `IfNotPresent`
+| `resources.requests.cpu`                        | CPU requested for being run in a node                                                                              | `100m`
+| `resources.requests.memory`                     | Memory requested for being run in a node                                                                           | `128Mi`
+| `resources.limits.cpu`                          | CPU limit                                                                                                          | `200m`
+| `resources.limits.memory`                       | Memory limit                                                                                                       | `200Mi`
+| `service.type`                                  | Service Map (NodePort/ClusterIP)                                                                                   | `ClusterIP`
+| `service.port`                                  | Service Port                                                                                                       | `8089`
+| `prom2teams.host`                               | IP to bind to                                                                                                      | `0.0.0.0`
+| `prom2teams.port`                               | Port to bind to                                                                                                    | `8089`
+| `prom2teams.connector`                          | Connector URL                                                                                                      | `<empty>`
+| `prom2teams.group_alerts_by`                    | Group_alerts_by field                                                                                              | `<empty>`
+| `prom2teams.loglevel`                           | Loglevel                                                                                                           | `INFO`
+| `prom2teams.templatepath`                       | Custom Template path (files/teams.j2)                                                                              | `/opt/prom2teams/helmconfig/teams.j2`
+| `prom2teams.config`                             | Config (specific to Helm)                                                                                          | `/opt/prom2teams/helmconfig/config.ini`
 
 ### Docker image
 
